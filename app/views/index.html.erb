@@ -1,0 +1,32 @@
+<div class="bg-white p-4 rounded shadow mb-6">
+  <%= search_form_for @q do |f| %>
+    <div class="flex gap-2">
+      <%= f.search_field :name_cont, placeholder: "馬名で検索 (例: キタサン...)", class: "border p-2 rounded w-full" %>
+      <%= f.submit "検索", class: "bg-green-600 text-white px-4 py-2 rounded" %>
+    </div>
+  <% end %>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <% @horses.each do |horse| %>
+    <div class="bg-white rounded-xl shadow border p-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-xl font-bold"><%= link_to horse.name, horse %></h2>
+          <p class="text-sm text-gray-500">父: <%= horse.sire %></p>
+        </div>
+        
+        <%= render 'favorite_button', horse: horse %>
+      </div>
+      
+      <div class="mt-2 text-sm">
+        <% if horse.race_results.any? %>
+          <span class="bg-green-100 text-green-800 px-2 py-1 rounded">
+            前走: <%= horse.race_results.last.race_name %> 
+            (<%= horse.race_results.last.rank %>着)
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
