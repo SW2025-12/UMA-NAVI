@@ -1,0 +1,53 @@
+<div class="profile-header">
+  <h1><%= @horse.name %></h1>
+  
+  <% if current_user.favorites.exists?(horse_id: @horse.id) %>
+    <%= button_to '推し馬解除', horse_favorites_path(@horse), method: :delete, class: "btn-danger" %>
+  <% else %>
+    <%= button_to '推し馬に登録！', horse_favorites_path(@horse), method: :post, class: "btn-primary" %>
+  <% end %>
+</div>
+
+<div class="horse-info">
+  <h3>プロフィール</h3>
+  <p>父：<%= @horse.sire %></p>
+  <p>母：<%= @horse.dam %></p>
+  <p>戦績：<%= @horse.record %></p>
+</div>
+
+<div class="race-history">
+  <h3>レース成績</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>レース名</th>
+        <th>着順</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @races.each do |race| %>
+        <tr>
+          <td><%= race.date %></td>
+          <td><%= race.name %></td>
+          <td><%= race.entries.find_by(horse: @horse)&.order_of_finish %>着</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="comments-section">
+  <h3>みんなの感想</h3>
+  <%= form_with(model: [@horse, @comment], local: true) do |f| %>
+    <%= f.text_area :body, placeholder: "この馬の思い出や応援メッセージを書こう！" %>
+    <%= f.submit "投稿する" %>
+  <% end %>
+
+  <% @comments.each do |comment| %>
+    <div class="comment">
+      <strong><%= comment.user.name %>:</strong>
+      <p><%= comment.body %></p>
+    </div>
+  <% end %>
+</div>

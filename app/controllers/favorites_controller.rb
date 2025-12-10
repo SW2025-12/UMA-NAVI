@@ -1,20 +1,17 @@
 class FavoritesController < ApplicationController
-  before_action :authenticate_user!
+  # ログインしているユーザーのみ実行可能にする（Devise使用時）
+  # before_action :authenticate_user! 
 
   def create
-    @horse = Horse.find(params[:horse_id])
-    current_user.favorites.create(horse: @horse)
-    
-    # Turbo Streamでボタン部分だけ書き換え
-    render turbo_stream: turbo_stream.replace("favorite_button_#{@horse.id}", partial: 'horses/favorite_button', locals: { horse: @horse })
+    horse = Horse.find(params[:horse_id])
+    current_user.favorites.create(horse: horse)
+    redirect_back(fallback_location: root_path, notice: "#{horse.name}を推し馬に登録しました！")
   end
 
   def destroy
-    @horse = Horse.find(params[:horse_id])
-    favorite = current_user.favorites.find_by(horse: @horse)
+    horse = Horse.find(params[:horse_id])
+    favorite = current_user.favorites.find_by(horse_id: horse.id)
     favorite.destroy
-
-    # Turbo Streamでボタン部分だけ書き換え
-    render turbo_stream: turbo_stream.replace("favorite_button_#{@horse.id}", partial: 'horses/favorite_button', locals: { horse: @horse })
+    redirect_back(fallback_location: root_path, alert: "#{horse.name}の登録を解除しました。")
   end
 end
