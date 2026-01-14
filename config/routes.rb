@@ -1,11 +1,12 @@
 Rails.application.routes.draw do
-  root 'horses#index' # トップページを馬の検索/一覧に
+  # トップページを馬の一覧ページに設定
+  root 'horses#index'
 
-  resources :horses, only: [:index, :show] do
-    resource :favorites, only: [:create, :destroy] # お気に入り登録/解除
-    resources :comments, only: [:create, :destroy] # 感想投稿
+  # ▼ ここを変更しました（only: [] を消して、登録・編集・削除など全ての機能を使えるようにします）
+  resources :horses do
+    resource :favorites, only: [:create, :destroy]
+    resources :comments, only: [:create, :destroy]
   end
-  
-  # ユーザーマイページ（お気に入り一覧用）
+
   resources :users, only: [:show]
 end

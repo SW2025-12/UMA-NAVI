@@ -1,129 +1,51 @@
-<div class="hero-section">
-  <div class="hero-content">
-    
-    <h1 class="hero-title">
-      <span class="logo-icon">🐎</span> UMA-NAVI
+<div class="header-section" style="background: linear-gradient(135deg, #1d6f42 0%, #1e3c72 100%); padding: 60px 0; text-align: center; color: white; margin-bottom: 30px;">
+  
+  <div style="margin-bottom: 20px;">
+    <h1 style="font-size: 3rem; margin: 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.4); font-family: serif;">
+      🐎 UMA-NAVI
     </h1>
-    <p class="hero-subtitle">国内最大級の競走馬データベース & ファンコミュニティ</p>
-    
-    <div class="search-box">
-      <%= form_with url: horses_path, method: :get, local: true, class: "search-form" do |f| %>
-        <%= f.text_field :search, placeholder: "馬名を入力（例: ディープインパクト）", class: "search-input", value: params[:search] %>
-        <button type="submit" class="search-btn">
-          🔍 検索
-        </button>
-      <% end %>
-    </div>
+    <p style="font-size: 1.1rem; opacity: 0.9; margin-top: 10px;">
+      国内最大級の競走馬データベース & ファンコミュニティ（Wiki）
+    </p>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <%= form_with url: horses_path, method: :get, local: true do |f| %>
+      <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 50px; display: inline-flex; align-items: center; backdrop-filter: blur(5px);">
+        <div style="background: white; border-radius: 40px; display: flex; align-items: center; padding: 5px 10px; width: 500px; max-width: 90vw;">
+          <%= f.text_field :search, value: @search_term, placeholder: "馬名で検索 または ページ作成...", style: "border: none; outline: none; flex: 1; padding: 10px; font-size: 16px;" %>
+          <%= f.button style: "background: #e6b422; color: #333; border: none; border-radius: 30px; padding: 10px 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;" do %>
+            <span>🔍 検索</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 
-<div class="main-container">
+<div class="content-container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  
+  <p style="color: green; text-align: center;"><%= notice %></p>
 
-  <% if @search_mode %>
-    <h2 class="section-title">🔎 "<%= params[:search] %>" の検索結果</h2>
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+    <span style="font-size: 24px;">🐴</span>
+    <% if @search_term.present? %>
+      <h2 style="margin: 0; color: #2c5e2e;">"<%= @search_term %>" の検索結果</h2>
+    <% else %>
+      <h2 style="margin: 0; color: #2c5e2e;">最近更新されたページ</h2>
+    <% end %>
+  </div>
+
+  <div id="horses">
     
-    <div class="horse-grid">
-      <% @horses.each do |horse| %>
-        <div class="horse-card">
-          <%= link_to horse_path(horse), class: "card-link" do %>
-            <div class="card-icon">🐎</div>
-            <div class="card-info">
-              <h3><%= horse.name %></h3>
-              <p>父：<%= horse.sire %></p>
-              <p>母：<%= horse.dam %></p>
-            </div>
-          <% end %>
-
-          <div class="card-action-area">
-            <details class="comment-dropdown">
-              <summary class="btn-comment-toggle">💬 感想を書く</summary>
-              <div class="mini-form">
-                <%= form_with(model: [horse, Comment.new], local: true) do |f| %>
-                  <%= f.text_area :body, placeholder: "例: 次のレース期待してる！", rows: 2, class: "mini-input", required: true %>
-                  <div style="text-align: right;">
-                    <%= f.submit "送信", class: "btn-mini-submit" %>
-                  </div>
-                <% end %>
-              </div>
-            </details>
+    <% if @horses.any? %>
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <% @horses.each do |horse| %>
+          <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
             
-            <% if horse.comments.any? %>
-              <p class="latest-comment">
-                <small>🗣️ <%= horse.comments.last.body.truncate(15) %></small>
-              </p>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <% if @horses.empty? %>
-      <div style="text-align: center; margin-top: 50px; color: #777;">
-        <p>該当する馬が見つかりませんでした。</p>
-        <p>別のキーワードで検索してみてください。</p>
-      </div>
-    <% end %>
-
-    <div class="back-link" style="margin-top: 50px; text-align: center;">
-      <%= link_to "トップに戻る", root_path, class: "btn-sm" %>
-    </div>
-
-  <% else %>
-    <section class="section-block">
-      <h2 class="section-title">みんなの注目馬 (Ranking)</h2>
-      <div class="ranking-grid">
-        <% @ranking_horses.each.with_index(1) do |horse, i| %>
-          <%= link_to horse_path(horse), class: "ranking-card rank-#{i}" do %>
-            <div class="rank-badge"><%= i %></div>
-            <div class="horse-face">🐴</div>
-            <div class="horse-detail">
-              <h3><%= horse.name %></h3>
-              <p>推し登録数: <%= horse.favorites.count %>人</p>
-            </div>
-          <% end %>
-        <% end %>
-        <% if @ranking_horses.empty? %>
-           <p style="color: #999;">まだデータがありません。</p>
-        <% end %>
-      </div>
-    </section>
-
-    <section class="section-block">
-      <h2 class="section-title">今後のレース開催 (Schedule)</h2>
-      <div class="race-list">
-        <% @upcoming_races.each do |race| %>
-          <div class="race-item">
-            <div class="race-date">
-              <span class="month"><%= race.date.month %>月</span>
-              <span class="day"><%= race.date.day %>日</span>
-            </div>
-            <div class="race-info">
-              <h3><%= race.name %></h3>
-              <p>📍 <%= race.location rescue '未定' %></p>
-            </div>
-            <div class="race-action">
-              <span class="btn-sm">詳細へ</span>
-            </div>
-          </div>
-        <% end %>
-        <% if @upcoming_races.empty? %>
-          <p style="color: #999;">現在予定されているレースはありません。</p>
-        <% end %>
-      </div>
-    </section>
-
-    <% if @pickup_horse %>
-      <section class="section-block pickup-section">
-        <h2 class="section-title">Today's Pickup</h2>
-        <div class="pickup-card">
-          <div class="pickup-text">
-            <h3><%= @pickup_horse.name %></h3>
-            <p>父：<%= @pickup_horse.sire %> / 母：<%= @pickup_horse.dam %></p>
-            <%= link_to "プロフィールを見る", horse_path(@pickup_horse), class: "btn-pickup-link" %>
-          </div>
-        </div>
-      </section>
-    <% end %>
-
-  <% end %>
-</div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.25rem;">
+                <%= link_to horse.name, horse, style: "text-decoration: none; color: #333;" %>
+              </h3>
+              <p style="color: #666; font-size: 0.9rem; margin-top: 5px; margin-bottom: 0;">
+                <%= truncate(horse.description, length: 50) || "詳細情報なし" %>

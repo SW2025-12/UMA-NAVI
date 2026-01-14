@@ -1,0 +1,25 @@
+<div style="min-height: 100vh; background: #111; padding: 40px 20px; font-family: sans-serif; color: white;">
+  <div style="max-width: 600px; margin: 0 auto;">
+    <h1>EDIT DATA</h1>
+    
+    <%= form_with(model: @horse, local: true) do |f| %>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block;">馬名</label>
+        <%= f.text_field :name, style: "width: 100%; padding: 10px; font-size: 1.2rem;" %>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; color: #FFD700;">レース日程</label>
+        <%= f.text_field :race_schedule, style: "width: 100%; padding: 10px; font-size: 1.2rem; border: 2px solid #FFD700;" %>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display:block;">詳細</label>
+        <%= f.text_area :description, rows: 5, style: "width: 100%; padding: 10px; font-size: 1.2rem;" %>
+      </div>
+
+      <%= f.submit "更新する", style: "background: #FFD700; color: #000; border: none; padding: 15px 40px; font-size: 1.2rem; cursor: pointer; font-weight: bold;" %>
+      <%= link_to "キャンセル", horse_path(@horse), style: "color: #fff; margin-left: 20px;" %>
+    <% end %>
+  </div>
+</div>

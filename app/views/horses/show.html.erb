@@ -1,53 +1,38 @@
-<div class="profile-header">
-  <h1><%= @horse.name %></h1>
+<div style="min-height: 100vh; background: #111; padding: 40px 20px; font-family: sans-serif;">
   
-  <% if current_user.favorites.exists?(horse_id: @horse.id) %>
-    <%= button_to '推し馬解除', horse_favorites_path(@horse), method: :delete, class: "btn-danger" %>
-  <% else %>
-    <%= button_to '推し馬に登録！', horse_favorites_path(@horse), method: :post, class: "btn-primary" %>
-  <% end %>
-</div>
+  <div style="max-width: 800px; margin: 0 auto;">
+    <%= link_to "← BACK", horses_path, style: "color: #888; text-decoration: none; font-weight: bold;" %>
 
-<div class="horse-info">
-  <h3>プロフィール</h3>
-  <p>父：<%= @horse.sire %></p>
-  <p>母：<%= @horse.dam %></p>
-  <p>戦績：<%= @horse.record %></p>
-</div>
+    <div style="background: #fff; margin-top: 20px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);">
+      
+      <div style="background: linear-gradient(to right, #08200d, #000); padding: 40px; color: white; border-bottom: 5px solid #FFD700;">
+        <h1 style="margin: 0; font-size: 3rem; font-family: serif;"><%= @horse.name %></h1>
+        <p style="opacity: 0.6; margin: 5px 0 0;">Last Updated: <%= @horse.updated_at.strftime("%Y.%m.%d") %></p>
+      </div>
 
-<div class="race-history">
-  <h3>レース成績</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>日付</th>
-        <th>レース名</th>
-        <th>着順</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @races.each do |race| %>
-        <tr>
-          <td><%= race.date %></td>
-          <td><%= race.name %></td>
-          <td><%= race.entries.find_by(horse: @horse)&.order_of_finish %>着</td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+      <div style="padding: 40px;">
+        
+        <div style="background: #fff8e1; border: 2px solid #FFD700; padding: 20px; border-radius: 10px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px;">
+          <div style="font-size: 2rem;">🗓</div>
+          <div>
+            <div style="font-size: 0.8rem; color: #999; font-weight: bold;">RACE SCHEDULE</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #333;">
+              <%= @horse.race_schedule.presence || "日程は未定です" %>
+            </div>
+          </div>
+        </div>
 
-<div class="comments-section">
-  <h3>みんなの感想</h3>
-  <%= form_with(model: [@horse, @comment], local: true) do |f| %>
-    <%= f.text_area :body, placeholder: "この馬の思い出や応援メッセージを書こう！" %>
-    <%= f.submit "投稿する" %>
-  <% end %>
+        <div style="font-size: 1.2rem; line-height: 2; color: #333; margin-bottom: 50px;">
+          <%= simple_format(@horse.description) %>
+        </div>
 
-  <% @comments.each do |comment| %>
-    <div class="comment">
-      <strong><%= comment.user.name %>:</strong>
-      <p><%= comment.body %></p>
+        <div style="border-top: 1px solid #eee; padding-top: 30px; display: flex; justify-content: flex-end; gap: 10px;">
+          <%= link_to "EDIT INFO", edit_horse_path(@horse), style: "background: #08200d; color: #fff; padding: 12px 30px; text-decoration: none; font-weight: bold; border-radius: 5px;" %>
+          
+          <%= button_to "DELETE", @horse, method: :delete, form: {style: "display:inline-block;"}, style: "background: #fff; color: #d9534f; border: 2px solid #d9534f; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer;", data: { turbo_confirm: "本当に削除しますか？" } %>
+        </div>
+
+      </div>
     </div>
-  <% end %>
+  </div>
 </div>
